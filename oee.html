@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pemantauan Mesin Produksi Real-time</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2ECC71',
+                        secondary: '#3498DB'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .machine-card {
+            transition: all 0.3s ease;
+        }
+        
+        .machine-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .status-running {
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+        }
+        
+        .status-standby {
+            background: linear-gradient(135deg, #F1C40F, #F39C12);
+        }
+        
+        .status-linestop {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+        }
+        
+        .status-maintenance {
+            background: linear-gradient(135deg, #E67E22, #D35400);
+        }
+        
+        .status-trial {
+            background: linear-gradient(135deg, #3498DB, #2980B9);
+        }
+        
+        .status-off {
+            background: linear-gradient(135deg, #95A5A6, #7F8C8D);
+        }
+        
+        .area-container {
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .table-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .table-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        .count-card {
+            transition: all 0.3s ease;
+        }
+        
+        .count-card:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-inter">
+    <div class="min-h-screen p-6">
+        <div class="grid grid-cols-12 gap-6 h-screen">
+            <!-- Area Status Mesin (Kolom Kiri) -->
+            <div class="col-span-8 space-y-4 overflow-y-auto">
+                <h1 class="text-2xl font-bold text-gray-800 mb-4">Status Mesin Real-time</h1>
+                
+                <!-- Area A -->
+                <div class="area-container p-4">
+                    <div class="flex items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-700">AREA A</h2>
+                    </div>
+                    <div class="grid grid-cols-10 gap-3 mb-3">
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-01</div>
+                            <div class="text-lg font-bold">98%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-02</div>
+                            <div class="text-lg font-bold">85%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-03</div>
+                            <div class="text-lg font-bold">95%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-04</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-05</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-06</div>
+                            <div class="text-lg font-bold">92%</div>
+                        </div>
+                        <div class="machine-card status-maintenance text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-07</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-08</div>
+                            <div class="text-lg font-bold">94%</div>
+                        </div>
+                        <div class="machine-card status-trial text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-09</div>
+                            <div class="text-lg font-bold">75%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-10</div>
+                            <div class="text-lg font-bold">96%</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-3">
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-11</div>
+                            <div class="text-lg font-bold">82%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-12</div>
+                            <div class="text-lg font-bold">94%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-13</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-14</div>
+                            <div class="text-lg font-bold">91%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-15</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-16</div>
+                            <div class="text-lg font-bold">88%</div>
+                        </div>
+                        <div class="machine-card status-maintenance text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A-17</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Area A+ -->
+                <div class="area-container p-4">
+                    <div class="flex items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-700">AREA A+</h2>
+                    </div>
+                    <div class="grid grid-cols-10 gap-3 mb-3">
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-01</div>
+                            <div class="text-lg font-bold">96%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-02</div>
+                            <div class="text-lg font-bold">85%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-03</div>
+                            <div class="text-lg font-bold">95%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-04</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-05</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-06</div>
+                            <div class="text-lg font-bold">92%</div>
+                        </div>
+                        <div class="machine-card status-maintenance text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-07</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-08</div>
+                            <div class="text-lg font-bold">99%</div>
+                        </div>
+                        <div class="machine-card status-trial text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-09</div>
+                            <div class="text-lg font-bold">75%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-10</div>
+                            <div class="text-lg font-bold">96%</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-10 gap-3">
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-11</div>
+                            <div class="text-lg font-bold">82%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-12</div>
+                            <div class="text-lg font-bold">94%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-13</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-14</div>
+                            <div class="text-lg font-bold">91%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-15</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-16</div>
+                            <div class="text-lg font-bold">88%</div>
+                        </div>
+                        <div class="machine-card status-maintenance text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-17</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-18</div>
+                            <div class="text-lg font-bold">93%</div>
+                        </div>
+                        <div class="machine-card status-trial text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-19</div>
+                            <div class="text-lg font-bold">78%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">A+-20</div>
+                            <div class="text-lg font-bold">97%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Area B -->
+                <div class="area-container p-4">
+                    <div class="flex items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-700">AREA B</h2>
+                    </div>
+                    <div class="grid grid-cols-10 gap-3 mb-3">
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-01</div>
+                            <div class="text-lg font-bold">96%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-02</div>
+                            <div class="text-lg font-bold">81%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-03</div>
+                            <div class="text-lg font-bold">93%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-04</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-05</div>
+                            <div class="text-lg font-bold">88%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-06</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-07</div>
+                            <div class="text-lg font-bold">91%</div>
+                        </div>
+                        <div class="machine-card status-maintenance text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-08</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-09</div>
+                            <div class="text-lg font-bold">94%</div>
+                        </div>
+                        <div class="machine-card status-trial text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-10</div>
+                            <div class="text-lg font-bold">74%</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-5 gap-3">
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-11</div>
+                            <div class="text-lg font-bold">87%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-12</div>
+                            <div class="text-lg font-bold">79%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-13</div>
+                            <div class="text-lg font-bold">90%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-14</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">B-15</div>
+                            <div class="text-lg font-bold">85%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Area C -->
+                <div class="area-container p-4">
+                    <div class="flex items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-700">AREA C</h2>
+                    </div>
+                    <div class="grid grid-cols-10 gap-3 mb-3">
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-01</div>
+                            <div class="text-lg font-bold">95%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-02</div>
+                            <div class="text-lg font-bold">92%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-03</div>
+                            <div class="text-lg font-bold">83%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-04</div>
+                            <div class="text-lg font-bold">89%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-05</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-06</div>
+                            <div class="text-lg font-bold">91%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-07</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-08</div>
+                            <div class="text-lg font-bold">86%</div>
+                        </div>
+                        <div class="machine-card status-maintenance text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-09</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-10</div>
+                            <div class="text-lg font-bold">93%</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-9 gap-3">
+                        <div class="machine-card status-trial text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-11</div>
+                            <div class="text-lg font-bold">77%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-12</div>
+                            <div class="text-lg font-bold">89%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-13</div>
+                            <div class="text-lg font-bold">82%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-14</div>
+                            <div class="text-lg font-bold">90%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-15</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-16</div>
+                            <div class="text-lg font-bold">94%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-17</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-18</div>
+                            <div class="text-lg font-bold">87%</div>
+                        </div>
+                        <div class="machine-card status-trial text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">C-19</div>
+                            <div class="text-lg font-bold">75%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Area D -->
+                <div class="area-container p-4">
+                    <div class="flex items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-700">AREA D</h2>
+                    </div>
+                    <div class="grid grid-cols-10 gap-3 mb-3">
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-01</div>
+                            <div class="text-lg font-bold">97%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-02</div>
+                            <div class="text-lg font-bold">84%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-03</div>
+                            <div class="text-lg font-bold">91%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-04</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-05</div>
+                            <div class="text-lg font-bold">89%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-06</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-07</div>
+                            <div class="text-lg font-bold">93%</div>
+                        </div>
+                        <div class="machine-card status-maintenance text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-08</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-09</div>
+                            <div class="text-lg font-bold">86%</div>
+                        </div>
+                        <div class="machine-card status-trial text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-10</div>
+                            <div class="text-lg font-bold">78%</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-8 gap-3">
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-11</div>
+                            <div class="text-lg font-bold">92%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-12</div>
+                            <div class="text-lg font-bold">81%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-13</div>
+                            <div class="text-lg font-bold">88%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-14</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-15</div>
+                            <div class="text-lg font-bold">90%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-16</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-17</div>
+                            <div class="text-lg font-bold">85%</div>
+                        </div>
+                        <div class="machine-card status-trial text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">D-18</div>
+                            <div class="text-lg font-bold">73%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Area E -->
+                <div class="area-container p-4">
+                    <div class="flex items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-700">AREA E</h2>
+                    </div>
+                    <div class="grid grid-cols-9 gap-3">
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">E-01</div>
+                            <div class="text-lg font-bold">94%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">E-02</div>
+                            <div class="text-lg font-bold">89%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">E-03</div>
+                            <div class="text-lg font-bold">87%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">E-04</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">E-05</div>
+                            <div class="text-lg font-bold">91%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">E-06</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">E-07</div>
+                            <div class="text-lg font-bold">89%</div>
+                        </div>
+                        <div class="machine-card status-maintenance text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">E-08</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">E-09</div>
+                            <div class="text-lg font-bold">93%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Area F -->
+                <div class="area-container p-4">
+                    <div class="flex items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-700">AREA F</h2>
+                    </div>
+                    <div class="grid grid-cols-10 gap-3 mb-3">
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-01</div>
+                            <div class="text-lg font-bold">96%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-02</div>
+                            <div class="text-lg font-bold">82%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-03</div>
+                            <div class="text-lg font-bold">90%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-04</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-05</div>
+                            <div class="text-lg font-bold">88%</div>
+                        </div>
+                        <div class="machine-card status-linestop text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-06</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-07</div>
+                            <div class="text-lg font-bold">92%</div>
+                        </div>
+                        <div class="machine-card status-maintenance text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-08</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-09</div>
+                            <div class="text-lg font-bold">85%</div>
+                        </div>
+                        <div class="machine-card status-trial text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-10</div>
+                            <div class="text-lg font-bold">76%</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-5 gap-3">
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-11</div>
+                            <div class="text-lg font-bold">89%</div>
+                        </div>
+                        <div class="machine-card status-standby text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-12</div>
+                            <div class="text-lg font-bold">83%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-13</div>
+                            <div class="text-lg font-bold">91%</div>
+                        </div>
+                        <div class="machine-card status-off text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-14</div>
+                            <div class="text-lg font-bold">0%</div>
+                        </div>
+                        <div class="machine-card status-running text-white rounded-lg p-3 text-center shadow-md">
+                            <div class="text-sm font-semibold">F-15</div>
+                            <div class="text-lg font-bold">87%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Informasi Kanan -->
+            <div class="col-span-4 space-y-4">
+                <!-- Realtime Linestop -->
+                <div class="bg-white rounded-lg shadow-sm border p-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Realtime Linestop</h3>
+                    <div class="table-container">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2 text-left font-semibold text-gray-700">No</th>
+                                    <th class="px-3 py-2 text-left font-semibold text-gray-700">Mesin</th>
+                                    <th class="px-3 py-2 text-left font-semibold text-gray-700">Part/Mold</th>
+                                    <th class="px-3 py-2 text-left font-semibold text-gray-700">Problem</th>
+                                    <th class="px-3 py-2 text-left font-semibold text-gray-700">PIC</th>
+                                    <th class="px-3 py-2 text-left font-semibold text-gray-700">Mulai</th>
+                                    <th class="px-3 py-2 text-left font-semibold text-gray-700">Repair</th>
+                                    <th class="px-3 py-2 text-left font-semibold text-gray-700">Durasi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-3 py-3">1</td>
+                                    <td class="px-3 py-3 font-semibold">A24</td>
+                                    <td class="px-3 py-3">DOOR STORAGE</td>
+                                    <td class="px-3 py-3">Part Scrap Gelding</td>
+                                    <td class="px-3 py-3">MOLD SHOP</td>
+                                    <td class="px-3 py-3">06:17</td>
+                                    <td class="px-3 py-3">TEAM BRAVO</td>
+                                    <td class="px-3 py-3 text-red-600 font-semibold">131k menit</td>
+                                </tr>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-3 py-3">2</td>
+                                    <td class="px-3 py-3 font-semibold">E09</td>
+                                    <td class="px-3 py-3">COVER STORAGE</td>
+                                    <td class="px-3 py-3">Hydraulic Pressure Drop</td>
+                                    <td class="px-3 py-3">MAINTENANCE</td>
+                                    <td class="px-3 py-3">06:45</td>
+                                    <td class="px-3 py-3">TEAM ALPHA</td>
+                                    <td class="px-3 py-3 text-red-600 font-semibold">82 menit</td>
+                                </tr>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-3 py-3">3</td>
+                                    <td class="px-3 py-3 font-semibold">C07</td>
+                                    <td class="px-3 py-3">HOUSING MOTOR</td>
+                                    <td class="px-3 py-3">Mold Crack Detected</td>
+                                    <td class="px-3 py-3">MOLD SHOP</td>
+                                    <td class="px-3 py-3">11:30</td>
+                                    <td class="px-3 py-3">TEAM CHARLIE</td>
+                                    <td class="px-3 py-3 text-red-600 font-semibold">100 menit</td>
+                                </tr>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-3 py-3">4</td>
+                                    <td class="px-3 py-3 font-semibold">D06</td>
+                                    <td class="px-3 py-3">BRACKET SET</td>
+                                    <td class="px-3 py-3">Material Shortage</td>
+                                    <td class="px-3 py-3">PRODUKSI</td>
+                                    <td class="px-3 py-3">06:30</td>
+                                    <td class="px-3 py-3">TEAM DELTA</td>
+                                    <td class="px-3 py-3 text-red-600 font-semibold">90 menit</td>
+                                </tr>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-3 py-3">5</td>
+                                    <td class="px-3 py-3 font-semibold">B06</td>
+                                    <td class="px-3 py-3">PANEL COVER</td>
+                                    <td class="px-3 py-3">Temperature Control</td>
+                                    <td class="px-3 py-3">MAINTENANCE</td>
+                                    <td class="px-3 py-3">07:15</td>
+                                    <td class="px-3 py-3">TEAM ECHO</td>
+                                    <td class="px-3 py-3 text-red-600 font-semibold">65 menit</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-2">Exists 1 of 2</div>
+                </div>
+
+                <!-- Current Shift Count -->
+                <div class="bg-white rounded-lg shadow-sm border p-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Current Shift Count</h3>
+                    <div class="grid grid-cols-4 gap-3">
+                        <div class="count-card text-center p-3 bg-gray-100 rounded-lg">
+                            <div class="text-2xl font-bold text-gray-700">0</div>
+                            <div class="text-xs text-gray-600">Planned Machine</div>
+                        </div>
+                        <div class="count-card text-center p-3 bg-green-100 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600">79</div>
+                            <div class="text-xs text-green-600">Running Machine</div>
+                        </div>
+                        <div class="count-card text-center p-3 bg-red-100 rounded-lg">
+                            <div class="text-2xl font-bold text-red-600">5</div>
+                            <div class="text-xs text-red-600">Not Running Yet</div>
+                        </div>
+                        <div class="count-card text-center p-3 bg-blue-100 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600">2</div>
+                            <div class="text-xs text-blue-600">Running w/o Plan</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Realtime Count -->
+                <div class="bg-white rounded-lg shadow-sm border p-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Realtime Count</h3>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="count-card text-center p-4 bg-green-500 text-white rounded-lg">
+                            <div class="text-3xl font-bold">59</div>
+                            <div class="text-sm">Running Auto</div>
+                        </div>
+                        <div class="count-card text-center p-4 bg-yellow-500 text-white rounded-lg">
+                            <div class="text-3xl font-bold">7</div>
+                            <div class="text-sm">Standby</div>
+                        </div>
+                        <div class="count-card text-center p-4 bg-gray-500 text-white rounded-lg">
+                            <div class="text-3xl font-bold">20</div>
+                            <div class="text-sm">Off</div>
+                        </div>
+                        <div class="count-card text-center p-4 bg-red-500 text-white rounded-lg">
+                            <div class="text-3xl font-bold">11</div>
+                            <div class="text-sm">Linestop</div>
+                        </div>
+                        <div class="count-card text-center p-4 bg-orange-500 text-white rounded-lg">
+                            <div class="text-3xl font-bold">9</div>
+                            <div class="text-sm">Maintenance</div>
+                        </div>
+                        <div class="count-card text-center p-4 bg-blue-500 text-white rounded-lg">
+                            <div class="text-3xl font-bold">6</div>
+                            <div class="text-sm">Trial</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Planning Note -->
+                <div class="bg-white rounded-lg shadow-sm border p-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Planning Note</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-start space-x-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div class="text-gray-700">Planned no Output A12, E12, E16, A04, C05, A05</div>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div class="text-gray-700">Running without Plan E19, A03</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="realtime-update">
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateMachineStatus() {
+                const machines = document.querySelectorAll('.machine-card');
+                machines.forEach(machine => {
+                    const percentage = machine.querySelector('.text-lg');
+                    if (percentage && !machine.classList.contains('status-off') && !machine.classList.contains('status-linestop') && !machine.classList.contains('status-maintenance')) {
+                        const currentValue = parseInt(percentage.textContent);
+                        const variation = Math.floor(Math.random() * 6) - 3;
+                        const newValue = Math.max(70, Math.min(100, currentValue + variation));
+                        percentage.textContent = newValue + '%';
+                    }
+                });
+            }
+
+            function updateCounts() {
+                const runningCount = document.querySelectorAll('.status-running').length;
+                const standbyCount = document.querySelectorAll('.status-standby').length;
+                const offCount = document.querySelectorAll('.status-off').length;
+                const linestopCount = document.querySelectorAll('.status-linestop').length;
+                const maintenanceCount = document.querySelectorAll('.status-maintenance').length;
+                const trialCount = document.querySelectorAll('.status-trial').length;
+
+                const countElements = document.querySelectorAll('.count-card .text-3xl');
+                if (countElements.length >= 6) {
+                    countElements[0].textContent = runningCount;
+                    countElements[1].textContent = standbyCount;
+                    countElements[2].textContent = offCount;
+                    countElements[3].textContent = linestopCount;
+                    countElements[4].textContent = maintenanceCount;
+                    countElements[5].textContent = trialCount;
+                }
+            }
+
+            setInterval(() => {
+                updateMachineStatus();
+                updateCounts();
+            }, 5000);
+
+            updateCounts();
+        });
+    </script>
+
+    <script id="table-refresh">
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateDurations() {
+                const durationCells = document.querySelectorAll('tbody tr td:last-child');
+                durationCells.forEach(cell => {
+                    if (cell.textContent.includes('menit')) {
+                        const currentMinutes = parseInt(cell.textContent);
+                        const newMinutes = currentMinutes + 1;
+                        if (cell.textContent.includes('k')) {
+                            cell.textContent = Math.floor(newMinutes / 1000) + 'k menit';
+                        } else {
+                            cell.textContent = newMinutes + ' menit';
+                        }
+                    }
+                });
+            }
+
+            setInterval(updateDurations, 60000);
+        });
+    </script>
+</body>
+</html>
